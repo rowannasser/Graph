@@ -11,6 +11,7 @@ export class GraphService {
   private nodesUrl = 'http://localhost:3301/nodes';
   private edgesUrl = 'http://localhost:3301/edges';
   private graphUrl = 'http://localhost:3301/graph';
+  private updateUrl = 'http://localhost:3301/update';
 
   constructor(private http: HttpClient) { }
 
@@ -44,4 +45,16 @@ export class GraphService {
      console.log("donne edges");
   }
 
+  postNodesUpdates(nodes: any):void {
+    console.log("Hiiiii update nodes");
+    this.http.post<any>(this.updateUrl, nodes).subscribe(
+     (response) => {
+       console.log("Response of updates of nodes received:", response);
+     },
+     (error) => {
+       console.error("Error:", error);
+     }
+   );
+    console.log("donne updating nodes");
+  }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { GraphService } from './graph.service';
 import { fabric } from "fabric";
 
@@ -9,6 +9,7 @@ import { fabric } from "fabric";
 })
 
 export class AppComponent implements OnInit {
+
   constructor(private graphService: GraphService) { }
 
   index: any;
@@ -27,8 +28,8 @@ export class AppComponent implements OnInit {
   connectClicked: boolean = false;
   firstObjectSelected: boolean = false;
 
-  n: number = 0;
-
+  x: any = 0;
+  y: any = 0;
   ngOnInit() {
     this.canvas = new fabric.Canvas('canvas1');
     this.node = document.getElementById('node') as HTMLButtonElement;
@@ -36,13 +37,13 @@ export class AppComponent implements OnInit {
 
     this.getGraphData();
   }
-
+ 
 
   getGraphData(): void {
     this.graphService.getGraphData().subscribe(
       (data) => {
-
         this.graphData = data;
+
         this.nodesData = this.graphData.nodes;
         this.nodesData.forEach((node: { left_coordinate: number; top_coordinate: number; id: number; }) => {
           this.drawNode(node.left_coordinate, node.top_coordinate, node.id);
@@ -50,18 +51,14 @@ export class AppComponent implements OnInit {
 
         this.edgesData = this.graphData.edges;
         this.edgesData.forEach((node1: { source_node_id: number; target_node_id: number; }) => {
-
           this.addEdge(node1.source_node_id, node1.target_node_id);
-        }
-
-        );
+        });
         this.initializeID();
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
-
   }
 
   initializeID() {
@@ -84,14 +81,12 @@ export class AppComponent implements OnInit {
   }
 
   addEdgeToGraph(id1: any, id2: any, version: any) {
-
     const jsonEdges = {
       source_node_id: id1,
       version: version,
       target_node_id: id2
     }
     this.graphService.postEdgesData(jsonEdges);
-
   }
 
   drawNode(leftDim: number, topDim: number, iD: any) {
@@ -105,7 +100,6 @@ export class AppComponent implements OnInit {
       originY: 'center'
     });
 
-    // this.n++;
     var text = new fabric.Text('Node' + iD,
       {
         fontSize: 25,
@@ -135,13 +129,9 @@ export class AppComponent implements OnInit {
           }
         }
       }
-
     });
-    // var id = "p";
+    
     group.set('name', iD);
-
-    console.log("Left: ", group.left);
-    console.log("Top: ", group.top)
     this.canvas.add(group);
   }
 
@@ -173,12 +163,17 @@ export class AppComponent implements OnInit {
       const id2 = this.secondObject.name;
       if (id1 && id2) {
         var firstX: any, firstY: any, secondX: any, secondY: any;
-        // if (this.firstObject.name.charAt(0) === "p") {
+       
         firstX = this.firstObject.left;
         firstY = this.firstObject.top;
         firstX = firstX + 40;
         firstY = firstY + 40;
-
+        const jsonNodes1 = {
+          left_coordinate: firstX,
+          top_coordinate: firstY,
+          id: id1
+        };
+        this.graphService.postNodesUpdates(jsonNodes1);
         console.log("Left: ", firstX);
         console.log("Top: ", firstY)
 
@@ -186,16 +181,21 @@ export class AppComponent implements OnInit {
         secondY = this.secondObject.top;
         secondY = secondY + 40;
         secondX = secondX + 40;
+        const jsonNodes2 = {
+          left_coordinate: secondX,
+          top_coordinate: secondY,
+          id: id2
+        };
+        this.graphService.postNodesUpdates(jsonNodes2);
 
         this.connect(firstX, firstY, secondX, secondY);
         this.addEdgeToGraph(id1, id2, '2024-02-07 13:00:00');
-        // }
+        
       }
       this.firstObject = null;
       this.secondObject = null;
       this.connectClicked = false;
     }
-
   }
 
   connect(fromx: number, fromy: number, tox: number, toy: number) {
@@ -245,5 +245,4 @@ export class AppComponent implements OnInit {
     });
     this.canvas.add(arrow);
   }
-
 }
