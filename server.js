@@ -54,6 +54,23 @@ app.post('/edges', async (req, res) => {
   }
 });
 
+// Update Node coordinates
+app.post('/update', async (req, res) => {
+  try {
+    console.log(".......Updating node coordinates");
+    const { id, left_coordinate, top_coordinate } = req.body;
+    const node = await Node.findByPk(id);
+    if (!node) {
+      return res.status(404).json({ error: 'Node not found' });
+    }
+    await node.update({ left_coordinate, top_coordinate });
+    console.log("Node coordinates updated");
+    res.status(200).json(node);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Sync database and start server
 sequelize.sync().then(() => {
