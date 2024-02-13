@@ -1,22 +1,14 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const mongoose = require('mongoose');
 
-const Node = sequelize.define('node', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+const NodeSchema = new mongoose.Schema({
     left_coordinate: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: Number,
+        required: true
     },
     top_coordinate: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: Number,
+        required: true
     }
-    }, {
-        timestamps: false // Disable timestamps
 });
 
-module.exports = Node;
+module.exports = mongoose.model('Node', NodeSchema);
