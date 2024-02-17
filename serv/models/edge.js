@@ -1,34 +1,20 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const mongoose = require('mongoose');
 
-const Edge = sequelize.define('edge', {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true
+const EdgeSchema = new mongoose.Schema({
+  source_node_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Node',
+    required: true
   },
   version: {
-    type: DataTypes.DATE,
-    allowNull: false
+    type: Date,
+    required: true
   },
-  source_node_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-      model: 'nodes',
-      key: 'id'
-    }
-  },
-    target_node_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'nodes',
-        key: 'id'
-      }
-    }
-  }, {
-    timestamps: false // Disable timestamps
+  target_node_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Node',
+    required: true
+  }
 });
 
-module.exports = Edge;
+module.exports = mongoose.model('Edge', EdgeSchema);
