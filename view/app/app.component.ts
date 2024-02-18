@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(private graphService: GraphService) { }
 
-  
+
   graphData: any;
   nodesData: any;
   edgesData: any;
@@ -37,7 +37,7 @@ export class AppComponent implements OnInit {
 
     this.getGraphData();
   }
- 
+
 
   getGraphData(): void {
     this.graphService.getGraphData().subscribe(
@@ -45,15 +45,15 @@ export class AppComponent implements OnInit {
         this.graphData = data;
 
         this.nodesData = this.graphData.nodes;
-        this.nodesData.forEach((node: { left_coordinate: number; top_coordinate: number; _id: any;}) => {
-          console.log("ddddddddddd:   "+node._id);
+        this.nodesData.forEach((node: { left_coordinate: number; top_coordinate: number; _id: any; }) => {
+          console.log("ddddddddddd:   " + node._id);
           this.drawNode(node.left_coordinate, node.top_coordinate, node._id);
         });
 
         this.edgesData = this.graphData.edges;
         this.edgesData.forEach((node1: { source_node_id: any; target_node_id: any; }) => {
           this.addEdge(node1.source_node_id, node1.target_node_id);
-          console.log("yarabbb  "+node1.target_node_id);
+          console.log("yarabbb  " + node1.target_node_id);
         });
       },
       (error) => {
@@ -73,17 +73,17 @@ export class AppComponent implements OnInit {
       (response) => {
         console.log("Response of nodes received:", response);
         Id = response._id;
-        console.log("idddd:   "+Id);
-        this.drawNode(leftDim, topDim,Id);
+        console.log("idddd:   " + Id);
+        this.drawNode(leftDim, topDim, Id);
       },
       (error) => {
         console.error("Error:", error);
       }
     );
-   
-    
+
+
     console.log("donne");
-    
+
   }
 
   addEdgeToGraph(id1: any, id2: any, version: any) {
@@ -95,14 +95,14 @@ export class AppComponent implements OnInit {
     this.graphService.postEdgesData(jsonEdges).subscribe(
       (response) => {
         console.log("Response of nodes received:", response);
-      
+
       },
       (error) => {
         console.error("Error:", error);
       });
   }
 
-  drawNode(leftDim: number, topDim: number, id:any) {
+  drawNode(leftDim: number, topDim: number, id: any) {
     var circle = new fabric.Circle({
       radius: 40,
       opacity: 1,
@@ -112,8 +112,8 @@ export class AppComponent implements OnInit {
       originX: 'center',
       originY: 'center'
     });
-    console.log("idddd innn:   "+id);
-   
+    console.log("idddd innn:   " + id);
+
     var group = new fabric.Group([circle], {
       left: leftDim, top: topDim
     });
@@ -136,7 +136,7 @@ export class AppComponent implements OnInit {
         }
       }
     });
-    
+
     group.set('name', id);
     this.canvas.add(group);
   }
@@ -144,7 +144,7 @@ export class AppComponent implements OnInit {
   addEdge(firstID: any, secondID: any) {
     const firstNode = this.nodesData.find((node: { _id: any; }) => node._id === firstID);
     const secondNode = this.nodesData.find((node: { _id: any; }) => node._id === secondID);
-    console.log("3aaaaaaaaaaaaaaaaa"+firstNode);
+    console.log("3aaaaaaaaaaaaaaaaa" + firstNode);
     var firstX: any, firstY: any, secondX: any, secondY: any;
     if (firstNode && secondNode) {
       firstX = firstNode.left_coordinate + 40;
@@ -165,11 +165,11 @@ export class AppComponent implements OnInit {
 
     if (this.firstObject && this.secondObject) {
       const id1 = this.firstObject.name;
-      console.log("ahhhhhhhhh yanaaaa id1:  "+id1);
+      console.log("ahhhhhhhhh yanaaaa id1:  " + id1);
       const id2 = this.secondObject.name;
       if (id1 && id2) {
         var firstX: any, firstY: any, secondX: any, secondY: any;
-       
+
         firstX = this.firstObject.left;
         firstY = this.firstObject.top;
         firstX = firstX + 40;
@@ -178,7 +178,7 @@ export class AppComponent implements OnInit {
           id: id1,
           left_coordinate: firstX,
           top_coordinate: firstY
-          
+
         };
         this.graphService.postNodesUpdates(jsonNodes1);
         console.log("Left: ", firstX);
@@ -197,7 +197,7 @@ export class AppComponent implements OnInit {
 
         this.connect(firstX, firstY, secondX, secondY);
         this.addEdgeToGraph(id1, id2, '2024-02-07 13:00:00');
-        
+
       }
       this.firstObject = null;
       this.secondObject = null;
