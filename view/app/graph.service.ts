@@ -20,29 +20,16 @@ export class GraphService {
   }
 
 
-  postNodesData(nodes: any): void {
+  postNodesData(nodes: any): Observable<any> {
     console.log("Hiiiii nodes");
-     this.http.post<any>(this.nodesUrl, nodes).subscribe(
-      (response) => {
-        console.log("Response of nodes received:", response);
-      },
-      (error) => {
-        console.error("Error:", error);
-      }
-    );
-     console.log("donne nodes");
+     return this.http.post<any>(this.nodesUrl, nodes);
+    
+     
   }
-  postEdgesData(edges:any): void {
+  postEdgesData(edges:any): Observable<any> {
     console.log("Hi edges");
-     this.http.post<any>(this.edgesUrl, edges).subscribe(
-      (response) => {
-        console.log("Response of edges received:", response);
-      },
-      (error) => {
-        console.error("Error:", error);
-      }
-    );
-     console.log("donne edges");
+     return this.http.post<any>(this.edgesUrl, edges);
+     
   }
 
   postNodesUpdates(nodes: any):void {

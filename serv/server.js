@@ -3,12 +3,12 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const Node = require('./models/node');
 const Edge = require('./models/edge');
-
+const cors = require('cors');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3301;
 
 app.use(bodyParser.json());
-
+app.use(cors());
 // Connect to MongoDB
 mongoose.connect('mongodb://127.0.0.1:27017/graph_data', {
   useNewUrlParser: true,

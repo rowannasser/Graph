@@ -5,14 +5,14 @@ export interface GraphResponse {
 
 
 export interface Node {
-    id: number;
+    id: any;
     left_coordinate: number;
     top_coordinate: number;
   }
  
   export interface Edge {
-    id: number;
-    source_node_id: number;
+    id: any;
+    source_node_id: any;
     version: Date;
-    target_node_id: number;
+    target_node_id: any;
   }

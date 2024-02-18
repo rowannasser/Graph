@@ -16,7 +16,7 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ESNext", // Change module format to ESNext or CommonJS
+    "module": "ESNext",
     "useDefineForClassFields": false,
     "lib": [
       "ES2022",
