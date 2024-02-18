@@ -12,7 +12,7 @@ export class AppComponent implements OnInit {
 
   constructor(private graphService: GraphService) { }
 
-  index: any;
+  
   graphData: any;
   nodesData: any;
   edgesData: any;
@@ -55,7 +55,6 @@ export class AppComponent implements OnInit {
           this.addEdge(node1.source_node_id, node1.target_node_id);
           console.log("yarabbb  "+node1.target_node_id);
         });
-        // this.initializeID();
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -63,12 +62,6 @@ export class AppComponent implements OnInit {
     );
   }
 
-  initializeID() {
-    this.index = Math.max(...this.nodesData.map((node: { id: any; }) => node.id), 0) + 1 || 1;
-  }
-  incrementId() {
-    this.index++;
-  }
 
   addNodeToGraph(leftDim: number, topDim: number) {
     var Id;
@@ -163,7 +156,6 @@ export class AppComponent implements OnInit {
     } else {
       console.error('One or both nodes not found.');
     }
-
   }
 
   drawEdge() {
