@@ -45,15 +45,17 @@ export class AppComponent implements OnInit {
         this.graphData = data;
 
         this.nodesData = this.graphData.nodes;
-        this.nodesData.forEach((node: { left_coordinate: number; top_coordinate: number; id: number; }) => {
-          this.drawNode(node.left_coordinate, node.top_coordinate, node.id);
+        this.nodesData.forEach((node: { left_coordinate: number; top_coordinate: number; _id: any;}) => {
+          console.log("ddddddddddd:   "+node._id);
+          this.drawNode(node.left_coordinate, node.top_coordinate, node._id);
         });
 
         this.edgesData = this.graphData.edges;
-        this.edgesData.forEach((node1: { source_node_id: number; target_node_id: number; }) => {
+        this.edgesData.forEach((node1: { source_node_id: any; target_node_id: any; }) => {
           this.addEdge(node1.source_node_id, node1.target_node_id);
+          console.log("yarabbb  "+node1.target_node_id);
         });
-        this.initializeID();
+        // this.initializeID();
       },
       (error) => {
         console.error('Error fetching data:', error);
@@ -68,16 +70,27 @@ export class AppComponent implements OnInit {
     this.index++;
   }
 
-  addNodeToGraph(leftDim: number, topDim: number, iD: number) {
-    this.drawNode(leftDim, topDim, iD);
+  addNodeToGraph(leftDim: number, topDim: number) {
+    var Id;
     const jsonNodes = {
       left_coordinate: leftDim,
-      top_coordinate: topDim,
-      id: iD
+      top_coordinate: topDim
     };
-    this.graphService.postNodesData(jsonNodes);
+    this.graphService.postNodesData(jsonNodes).subscribe(
+      (response) => {
+        console.log("Response of nodes received:", response);
+        Id = response._id;
+        console.log("idddd:   "+Id);
+        this.drawNode(leftDim, topDim,Id);
+      },
+      (error) => {
+        console.error("Error:", error);
+      }
+    );
+   
+    
     console.log("donne");
-    console.log(jsonNodes);
+    
   }
 
   addEdgeToGraph(id1: any, id2: any, version: any) {
@@ -86,10 +99,17 @@ export class AppComponent implements OnInit {
       version: version,
       target_node_id: id2
     }
-    this.graphService.postEdgesData(jsonEdges);
+    this.graphService.postEdgesData(jsonEdges).subscribe(
+      (response) => {
+        console.log("Response of nodes received:", response);
+      
+      },
+      (error) => {
+        console.error("Error:", error);
+      });
   }
 
-  drawNode(leftDim: number, topDim: number, iD: any) {
+  drawNode(leftDim: number, topDim: number, id:any) {
     var circle = new fabric.Circle({
       radius: 40,
       opacity: 1,
@@ -99,16 +119,9 @@ export class AppComponent implements OnInit {
       originX: 'center',
       originY: 'center'
     });
-
-    var text = new fabric.Text('Node' + iD,
-      {
-        fontSize: 25,
-        originX: 'center',
-        originY: 'center',
-        fill: 'black',
-      });
-
-    var group = new fabric.Group([circle, text], {
+    console.log("idddd innn:   "+id);
+   
+    var group = new fabric.Group([circle], {
       left: leftDim, top: topDim
     });
     group.on("mousedown", (event) => {
@@ -131,14 +144,14 @@ export class AppComponent implements OnInit {
       }
     });
     
-    group.set('name', iD);
+    group.set('name', id);
     this.canvas.add(group);
   }
 
-  addEdge(firstID: number, secondID: number) {
-    const firstNode = this.nodesData.find((node: { id: number; }) => node.id === firstID);
-    const secondNode = this.nodesData.find((node: { id: number; }) => node.id === secondID);
-    console.log(firstNode);
+  addEdge(firstID: any, secondID: any) {
+    const firstNode = this.nodesData.find((node: { _id: any; }) => node._id === firstID);
+    const secondNode = this.nodesData.find((node: { _id: any; }) => node._id === secondID);
+    console.log("3aaaaaaaaaaaaaaaaa"+firstNode);
     var firstX: any, firstY: any, secondX: any, secondY: any;
     if (firstNode && secondNode) {
       firstX = firstNode.left_coordinate + 40;
@@ -160,6 +173,7 @@ export class AppComponent implements OnInit {
 
     if (this.firstObject && this.secondObject) {
       const id1 = this.firstObject.name;
+      console.log("ahhhhhhhhh yanaaaa id1:  "+id1);
       const id2 = this.secondObject.name;
       if (id1 && id2) {
         var firstX: any, firstY: any, secondX: any, secondY: any;
@@ -169,9 +183,10 @@ export class AppComponent implements OnInit {
         firstX = firstX + 40;
         firstY = firstY + 40;
         const jsonNodes1 = {
+          id: id1,
           left_coordinate: firstX,
-          top_coordinate: firstY,
-          id: id1
+          top_coordinate: firstY
+          
         };
         this.graphService.postNodesUpdates(jsonNodes1);
         console.log("Left: ", firstX);
@@ -182,9 +197,9 @@ export class AppComponent implements OnInit {
         secondY = secondY + 40;
         secondX = secondX + 40;
         const jsonNodes2 = {
+          id: id2,
           left_coordinate: secondX,
-          top_coordinate: secondY,
-          id: id2
+          top_coordinate: secondY
         };
         this.graphService.postNodesUpdates(jsonNodes2);
 
